@@ -12,14 +12,14 @@ keywords = ["data quality report", "data science", "data visualization"]
 python = "^3.9"
 pandas = "^1.4.2"
 numpy = "^1.22.3"
-pytest = "^7.1.1"
 plotly = "^5.7.0"
-coverage = "^6.3.2"
-pydata-sphinx-theme = "^0.8.1"
-numpydoc = "^1.2.1"
 tabulate = "^0.8.9"
 
 [tool.poetry.dev-dependencies]
+pytest = "^7.1.1"
+coverage = "^6.3.2"
+pydata-sphinx-theme = "^0.8.1"
+numpydoc = "^1.2.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
