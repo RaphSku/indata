@@ -1,0 +1,8 @@
+m2,number_of_rooms,city,district,price
+120,4,Springfield,Grandview,1500
+70,3,Chicago,Oak Brook,1500
+50,2,Chicago,Schaumburg,1200
+15,1,New York,Manhatten,700
+35,2,New York,Queens,1200
+75,,New York,Manhatten,2480
+,3,,Oak Brook,2709
