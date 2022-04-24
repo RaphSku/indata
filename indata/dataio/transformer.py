@@ -34,24 +34,31 @@ class Transformer(IFTransformer):
     """Transformer which does in-place modification of dataframes according
     to specified transformer properties
 
-    Parameters
-    ----------
-        columns : list[str]
-            Name of the columns which should be modified
-        funcs : list[Callable]
-            The functions which should be applied on the target columns
-        args : list[tuple]
-            Arguments which are passed to func if func needs any additional arguments. Note
-            that `args` behaves like a stack, the first tuple in `args` will be used for 
-            the first `func` which needs arguments
-
-    Raises
-    ------
-        DimError
-            Raises when the length of `columns` and `funcs` is not equal
+    Methods
+    -------
+        transform(dataframe: pd.DataFrame)
+            Applied on a column of a parent dataframe which should be modified
+            with a callable
     """
 
     def __init__(self, columns: list[str], funcs: list[Callable], args: list[tuple] = None):
+        """Initalises the Transformer
+
+        Parameters
+        ----------
+        columns : list[str]
+            Names of the columns which should be modified
+        funcs : list[Callable]
+            Functions which are applied on individual columns
+        args : list[tuple], optional
+            Arguments which will be given to the functions if they need additional arguments, by default None
+
+        Raises
+        ------
+        exception.DimError
+            Raised when the length of `columns` is not equal to the length of `funcs` since
+            i-th func will be applied on the i-th column
+        """
         if len(columns) != len(funcs):
             raise exception.DimError(f"The length of column and funcs has to match!")
         self.columns = columns
@@ -59,7 +66,7 @@ class Transformer(IFTransformer):
         self.args    = args
         
 
-    def transform(self, dataframe) -> pd.DataFrame:
+    def transform(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Transforms columns in a dataframe according to user specified callables
 
         Returns
@@ -91,22 +98,26 @@ class Transformer(IFTransformer):
 #################################################################################################
 
 def impute_mode(x: pd.DataFrame) -> pd.DataFrame:
+    """ Imputes the missing values with the mode """
     mode = x.mode().iloc[0]
 
     return x.fillna(mode)
 
 
 def impute_mean(x: pd.DataFrame) -> pd.DataFrame:
+    """ Imputes the missing values with the mean """
     mean = x.mean()
 
     return x.fillna(mean)
 
 
 def impute_median(x: pd.DataFrame) -> pd.DataFrame:
+    """ Imputes the missing values with the median """
     median = x.median()
 
     return x.fillna(median)
 
 
 def replace_entries(x: pd.DataFrame, target_entry: Any, replace_value: Any):
+    """ Replaces target entries with the choosen `replace_value` """
     return x.apply(lambda y: replace_value if y == target_entry else y)
