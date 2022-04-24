@@ -9,6 +9,7 @@ from abc import abstractmethod
 
 
 import indata.exception.base as exception
+import indata.dataio.transformer as transform
 
 
 #################################################################################################
@@ -85,7 +86,7 @@ class DataLoader(IFDataLoader):
         self.dataset = dataset
 
 
-    def read_csv(self, sep: str = ",", lineterminator: str = None) -> pd.DataFrame:
+    def read_csv(self, sep: str = ",", lineterminator: str = None, transformer: transform.Transformer = None) -> pd.DataFrame:
         """Extracts data out of a csv file and returns a pandas dataframe
 
         Parameters
@@ -94,11 +95,17 @@ class DataLoader(IFDataLoader):
             Seperator which is used for the csv file, by default ","
         lineterminator : str, optional
             Indicates when a line is terminated inside of the csv file, by default None
+        transformer : transform.Transformer, optional
+            Transforms dataframes in-place depending on specified columns and which callable
+            to apply on the column
 
         Returns
         -------
         pd.DataFrame
             A pandas dataframe
         """
+        dataframe = pd.read_csv(self.dataset.path_to_file, sep = sep, lineterminator = lineterminator)
+        if isinstance(transformer, transform.Transformer):
+            dataframe = transformer.transform(dataframe)
 
-        return pd.read_csv(self.dataset.path_to_file, sep = sep, lineterminator = lineterminator)
+        return dataframe
