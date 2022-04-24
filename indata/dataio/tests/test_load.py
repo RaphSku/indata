@@ -3,6 +3,7 @@
 import os
 import pytest
 import pandas as pd
+import numpy as np
 
 
 import indata.dataio.load as load
@@ -53,6 +54,9 @@ class TestDataLoader:
         path        = os.path.join(os.path.abspath(os.path.dirname(__file__)), "test.csv")
         cls.dataset = load.DataSet(path_to_file = path)
 
+        path_two        = os.path.join(os.path.abspath(os.path.dirname(__file__)), "test2.csv")
+        cls.dataset_two = load.DataSet(path_to_file = path_two)
+
 
     def test_initialisation_s01(self):
         """ Test if the attributes of DataLoader are set correctly """
@@ -97,4 +101,26 @@ class TestDataLoader:
         """ VERIFICATION """
         exp_data_frame  = pd.DataFrame({'Item1': [1, 0], 'Item2': [2, 5], 'Item3': [2, 2]})
         
+        pd.testing.assert_frame_equal(act_data_frame, exp_data_frame)
+
+
+    def test_transformer_s02(self):
+        """ Test if available transformer callables are working appropriately """
+
+        """ PREPARATION """
+        data_loader = load.DataLoader(dataset = self.dataset_two)
+        transformer = transform.Transformer(columns = ["Item1", "Item2", "Item3", "Item4"],
+                                            funcs   = [transform.impute_mean, transform.impute_median,
+                                                       transform.impute_mode, transform.replace_entries],
+                                            args    = [("Python", "Cpp")])
+
+        """ EXECUTION """
+        act_data_frame = data_loader.read_csv(transformer = transformer)
+
+        """ VERIFICATION """
+        exp_data_frame = pd.DataFrame({'Item1': [np.mean([2.2, -0.57]), 2.2, np.mean([2.2, -0.57]), -0.57],
+                                       'Item2': [0.25, 0.5, np.median([0.25, 0.5, 1.24]), 1.24],
+                                       'Item3': ["R1", "R2", "R1", "R1"],
+                                       'Item4': ["Some", "Hello", "Cpp", "Anyone"]})
+
         pd.testing.assert_frame_equal(act_data_frame, exp_data_frame)
