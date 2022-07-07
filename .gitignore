@@ -6,3 +6,4 @@ configs
 main.py
 docs
 *db.csv
+dist
