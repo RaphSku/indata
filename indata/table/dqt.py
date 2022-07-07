@@ -109,8 +109,10 @@ class DataQualityTable(IFDataQualityTable):
         if not os.path.exists(store_json_dir):
             os.mkdir(store_json_dir) # pragma: no cover
 
-        dqt_cont.to_json(f'{store_json_dir}/dqt_cont.json')
-        dqt_catg.to_json(f'{store_json_dir}/dqt_catg.json')
+        if continuous_features:
+            dqt_cont.to_json(f'{store_json_dir}/dqt_cont.json')
+        if categorical_features:
+            dqt_catg.to_json(f'{store_json_dir}/dqt_catg.json')
 
         return dqt_cont, dqt_catg
 
