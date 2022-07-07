@@ -8,8 +8,8 @@ InData is a concise project which enables the user to generate data quality repo
 ### Goal
 InData should primarily enable the fast generation of data quality reports for continous and categorical features. Additionally, data visualisation tools are integrated which can help to find patterns faster in data.
 
-### How to use it
-1. 
+### How to install it
+1. `pip install indata`
 
 ### Results
 
