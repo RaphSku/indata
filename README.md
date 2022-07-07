@@ -18,5 +18,5 @@ InData should primarily enable the fast generation of data quality reports for c
 [license-url]: https://github.com/RaphSku/indata/blob/main/LICENSE
 
 [contributors-shield]: https://img.shields.io/badge/Author-RaphSku-orange?style=plastic&labelColor=black
-[license-shield]: https://img.shields.io/badge/License-Apache-informational?style=plastic&labelColor=black
+[license-shield]: https://img.shields.io/badge/License-Apache%202.0-informational?style=plastic&labelColor=black
 [version-shield]: https://img.shields.io/badge/Version-1.0-red?style=plastic&labelColor=black
