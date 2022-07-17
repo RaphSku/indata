@@ -1,6 +1,5 @@
 [![Author][contributors-shield]][contributors-url]
 [![Apache 2.0 License][license-shield]][license-url]
-![Version][version-shield]
 ![example workflow](https://github.com/RaphSku/indata/actions/workflows/ci.yml/badge.svg)
 [![InData CD](https://github.com/RaphSku/indata/actions/workflows/cd.yml/badge.svg)](https://github.com/RaphSku/indata/actions/workflows/cd.yml)
 
@@ -200,4 +199,3 @@ Furthermore, when using the visualisation tools from this package, then these pl
 
 [contributors-shield]: https://img.shields.io/badge/Author-RaphSku-orange?style=plastic&labelColor=black
 [license-shield]: https://img.shields.io/badge/License-Apache%202.0-informational?style=plastic&labelColor=black
-[version-shield]: https://img.shields.io/badge/Version-1.0.0-red?style=plastic&labelColor=black
