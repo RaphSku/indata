@@ -2,6 +2,7 @@
 [![Apache 2.0 License][license-shield]][license-url]
 ![Version][version-shield]
 ![example workflow](https://github.com/RaphSku/indata/actions/workflows/ci.yml/badge.svg)
+[![InData CD](https://github.com/RaphSku/indata/actions/workflows/cd.yml/badge.svg)](https://github.com/RaphSku/indata/actions/workflows/cd.yml)
 
 # indata
 InData is a concise project which enables the user to generate data quality reports with ease and also other data exploration and data visualization tools are available
