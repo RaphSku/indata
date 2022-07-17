@@ -31,12 +31,15 @@ class TestBoxplot(unittest.TestCase):
         box      = boxplot.BoxPlot(name = "Boxplot Test", data = data["Feature2"])
         act_name = box.name
         act_data = box.data 
+        act_dir  = box.store_dir
 
         """ VERIFICATION """
         exp_name = "Boxplot Test"
         exp_data = data["Feature2"]
+        exp_dir  = "./"
         
         assert act_name == exp_name
+        assert act_dir  == exp_dir
         pd.testing.assert_series_equal(act_data, exp_data)
 
 
@@ -46,10 +49,10 @@ class TestBoxplot(unittest.TestCase):
 
         """ PREPARATION """
         data = self.dataloader.read_csv()
-        box  = boxplot.BoxPlot(name = "Boxplot Test", data = data["Feature2"])
+        box  = boxplot.BoxPlot(name = "Boxplot Test", data = data["Feature2"], store_dir = f"{self.path_to_this_mod}/plots")
 
         """ EXECUTION """
-        box.plot(store_dir = f"{self.path_to_this_mod}/plots")
+        box.plot()
 
         """ VERIFICATION """
         file_exists = False

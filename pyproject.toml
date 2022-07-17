@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "indata"
-version = "1.0.0"
+version = "1.0.1"
 description = "A tool in order to easily generate data quality reports from ABTs, visualize data and manipulate the ABT (analytics base table)"
 authors = ["RapSku <rapsku.dev@gmail.com>"]
 repository = "https://github.com/RaphSku/indata"

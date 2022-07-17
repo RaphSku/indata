@@ -19,7 +19,7 @@ class IFSPLOM:
     """
 
     @abstractmethod
-    def plot(self, store_dir: str): # pragma: no cover
+    def plot(self): # pragma: no cover
         pass
 
 
@@ -35,11 +35,11 @@ class SPLOM:
     
     Methods
     -------
-        plot(store_dir: str)
-            Plots the SPLOM and stores it to a user-defined directory
+        plot()
+            Plots the SPLOM and stores it to a user-defined directory `store_dir`
     """
 
-    def __init__(self, name: str, continuous_data: pd.DataFrame):
+    def __init__(self, name: str, continuous_data: pd.DataFrame, store_dir: str = "./"):
         """Initialises the SPLOM
 
         Parameters
@@ -48,23 +48,20 @@ class SPLOM:
             Name of the SPLOM
         data : pd.DataFrame
             Data of the features which should be plotted against each other
+        store_dir : str, default = "./"
+            A html file containing an interactive plot is stored to `store_dir`
         """
         self.name            = name
         self.continuous_data = continuous_data
-
+        self.store_dir       = store_dir
+        
     
-    def plot(self, store_dir: str) -> None:
-        """Plots the SPLOM and stores the plot inside of `store_dir`
-
-        Parameters
-        ----------
-        store_dir : str
-            A html file containing an interactive plot is stored to `store_dir`
-        """
-        if not os.path.exists(store_dir):
-            os.mkdir(store_dir)
-        if not os.path.exists(os.path.join(store_dir, "splom")):
-            os.mkdir(f"{store_dir}/splom")
+    def plot(self) -> None:
+        """Plots the SPLOM and stores the plot inside of `store_dir`"""
+        if not os.path.exists(self.store_dir):
+            os.mkdir(self.store_dir)
+        if not os.path.exists(os.path.join(self.store_dir, "splom")):
+            os.mkdir(f"{self.store_dir}/splom")
 
         dimension = len(self.continuous_data.columns)
 
@@ -94,4 +91,4 @@ class SPLOM:
             title_text = "Scatter Plot Matrix",
             showlegend = False
         )
-        fig.write_html(f"{store_dir}/splom/{self.name}.html")
+        fig.write_html(f"{self.store_dir}/splom/{self.name}.html")

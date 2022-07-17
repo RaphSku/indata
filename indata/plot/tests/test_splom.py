@@ -31,12 +31,15 @@ class TestSPLOM(unittest.TestCase):
         spm      = splom.SPLOM(name = "SPLOM Test", continuous_data = data[["Feature1", "Feature2", "Feature3"]])
         act_name = spm.name
         act_data = spm.continuous_data 
+        act_dir  = spm.store_dir
 
         """ VERIFICATION """
         exp_name = "SPLOM Test"
         exp_data = data[["Feature1", "Feature2", "Feature3"]]
+        exp_dir  = "./"
 
         assert act_name == exp_name
+        assert act_dir  == exp_dir
         pd.testing.assert_frame_equal(act_data, exp_data)
 
 
@@ -46,10 +49,10 @@ class TestSPLOM(unittest.TestCase):
 
         """ PREPARATION """
         data = self.dataloader.read_csv()
-        spm  = splom.SPLOM(name = "SPLOM Test", continuous_data = data[["Feature1", "Feature2", "Feature3"]])
+        spm  = splom.SPLOM(name = "SPLOM Test", continuous_data = data[["Feature1", "Feature2", "Feature3"]], store_dir = f"{self.path_to_this_mod}/plots")
 
         """ EXECUTION """
-        spm.plot(store_dir = f"{self.path_to_this_mod}/plots")
+        spm.plot()
 
         """ VERIFICATION """
         file_exists = False

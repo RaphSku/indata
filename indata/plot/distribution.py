@@ -14,7 +14,7 @@ class IFDistributionPlotter:
     """ Interface for the DistributionPlotters """
 
     @abstractmethod
-    def plot(self, store_dir: str): # pragma: no cover
+    def plot(self): # pragma: no cover
         pass
 
 
@@ -28,11 +28,11 @@ class ContinuousDistributionPlotter(IFDistributionPlotter):
 
     Methods
     -------
-        plot(store_dir: str)
-            Plotting a histogram of a continuous feature
+        plot()
+            Plotting a histogram of a continuous feature and stores it to `store_dir`
     """
 
-    def __init__(self, name: str, data: pd.DataFrame, dqt: pd.DataFrame):
+    def __init__(self, name: str, data: pd.DataFrame, dqt: pd.DataFrame, store_dir: str = "./"):
         """Initialises the ContinuousDistributionPlotter
 
         Parameters
@@ -44,24 +44,21 @@ class ContinuousDistributionPlotter(IFDistributionPlotter):
             dqt : pd.DataFrame
                 The data quality table from which information like mean and median
                 are extracted
+            store_dir : str, default = "./"
+                A html file containing an interactive plot is stored to `store_dir`
         """
-        self.name = name
-        self.data = data
-        self.dqt  = dqt
+        self.name      = name
+        self.data      = data
+        self.dqt       = dqt
+        self.store_dir = store_dir
 
 
-    def plot(self, store_dir: str) -> None:
-        """Plotting a histogram of a continuous feature
-
-        Parameters
-        ----------
-        store_dir : str
-            A html file containing an interactive plot is stored to `store_dir`
-        """
-        if not os.path.exists(store_dir):
-            os.mkdir(store_dir)
-        if not os.path.exists(os.path.join(store_dir, "continuous")):
-            os.mkdir(f"{store_dir}/continuous")
+    def plot(self) -> None:
+        """Plotting a histogram of a continuous feature"""
+        if not os.path.exists(self.store_dir):
+            os.mkdir(self.store_dir)
+        if not os.path.exists(os.path.join(self.store_dir, "continuous")):
+            os.mkdir(f"{self.store_dir}/continuous")
 
         first_quantile = self.dqt["1st Qrt."][self.name]
         mean           = self.dqt["mean"][self.name]
@@ -80,7 +77,7 @@ class ContinuousDistributionPlotter(IFDistributionPlotter):
             xaxis       = {'tickfont': {'size': 15}, 'titlefont': {'size': 25}},
             yaxis       = {'tickfont': {'size': 15}, 'titlefont': {'size': 25}}
         )
-        fig.write_html(f"{store_dir}/continuous/{self.name}.html")
+        fig.write_html(f"{self.store_dir}/continuous/{self.name}.html")
 
 
 #################################################################################################
@@ -92,10 +89,10 @@ class CategoricalDistributionPlotter(IFDistributionPlotter):
 
     Methods
     -------
-        plot(store_dir: str)
+        plot()
             Stores the plot to the `store_dir` directory
     """
-    def __init__(self, name: str, data: pd.DataFrame, label_hash: dict, dqt: pd.DataFrame = None):
+    def __init__(self, name: str, data: pd.DataFrame, label_hash: dict, dqt: pd.DataFrame = None, store_dir: str = "./"):
         """Initialises the CategoricalDistributionPlotter
 
         Parameters
@@ -108,26 +105,24 @@ class CategoricalDistributionPlotter(IFDistributionPlotter):
             Hashes the observed distinct categories to its frequencies
         dqt : pd.DataFrame, optional
             Data quality table associated with the categorical feature, defaults to None
+        store_dir : str, default = "./"
+            A html file containing an interactive plot is stored to `store_dir`
         """
         self.name       = name
         self.data       = data
         self.dqt        = dqt
         self.label_hash = label_hash
+        self.store_dir  = store_dir
 
 
-    def plot(self, store_dir: str) -> None:
+    def plot(self) -> None:
         """Plots the categorical feature as a bar plot, the distinct categories
         are plotted on the x-axis and their respective frequencies on the y-axis
-
-        Parameters
-        ----------
-        store_dir : str
-            A html file containing an interactive plot is stored to `store_dir`
         """
-        if not os.path.exists(store_dir):
-            os.mkdir(store_dir)
-        if not os.path.exists(os.path.join(store_dir, "categorical")):
-            os.mkdir(f"{store_dir}/categorical")
+        if not os.path.exists(self.store_dir):
+            os.mkdir(self.store_dir)
+        if not os.path.exists(os.path.join(self.store_dir, "categorical")):
+            os.mkdir(f"{self.store_dir}/categorical")
 
         fig = go.Figure(data = [go.Bar(x = list(self.label_hash.keys()), y = list(self.label_hash.values()))])
         fig.update_layout(
@@ -137,4 +132,4 @@ class CategoricalDistributionPlotter(IFDistributionPlotter):
             xaxis       = {'tickfont': {'size': 15}, 'titlefont': {'size': 25}},
             yaxis       = {'tickfont': {'size': 15}, 'titlefont': {'size': 25}}
         )
-        fig.write_html(f"{store_dir}/categorical/{self.name}.html")
+        fig.write_html(f"{self.store_dir}/categorical/{self.name}.html")

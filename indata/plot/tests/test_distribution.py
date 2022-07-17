@@ -37,13 +37,16 @@ class TestDistributionPlots(unittest.TestCase):
         act_name = cdist.name
         act_data = cdist.data 
         act_dqt  = cdist.dqt
+        act_dir  = cdist.store_dir
 
         """ VERIFICATION """
         exp_name = "Feature1"
         exp_data = data["Feature1"]
         exp_dqt  = cqt
+        exp_dir  = "./"
         
         assert act_name == exp_name
+        assert act_dir  == exp_dir
         pd.testing.assert_series_equal(act_data, exp_data)
         pd.testing.assert_frame_equal(act_dqt, exp_dqt)
 
@@ -62,13 +65,16 @@ class TestDistributionPlots(unittest.TestCase):
         act_name = cdist.name
         act_data = cdist.data 
         act_dqt  = cdist.dqt
+        act_dir  = cdist.store_dir
 
         """ VERIFICATION """
         exp_name = "Feature5"
         exp_data = data["Feature5"]
         exp_dqt  = cat_qt
+        exp_dir  = "./"
         
         assert act_name == exp_name
+        assert act_dir  == exp_dir
         pd.testing.assert_series_equal(act_data, exp_data)
         pd.testing.assert_frame_equal(act_dqt, exp_dqt)
 
@@ -82,10 +88,11 @@ class TestDistributionPlots(unittest.TestCase):
         analytics_table = dqt.DataQualityTable(dataloader = self.dataloader)
         cqt, _          = analytics_table.create_table(continuous_features = ["Feature1", "Feature2", "Feature3", "Feature4"], 
                                                        categorical_features = [], store_json_dir = f"{self.path_to_this_mod}")
-        cdist           = distribution.ContinuousDistributionPlotter(name = "Feature1", data = data["Feature1"], dqt = cqt)
+        cdist           = distribution.ContinuousDistributionPlotter(name = "Feature1", data = data["Feature1"], dqt = cqt,
+                                                                     store_dir = f"{self.path_to_this_mod}/plots")
 
         """ EXECUTION """
-        cdist.plot(store_dir = f"{self.path_to_this_mod}/plots")
+        cdist.plot()
 
         """ VERIFICATION """
         file_exists = False
@@ -105,10 +112,11 @@ class TestDistributionPlots(unittest.TestCase):
         _, cat_qt       = analytics_table.create_table(continuous_features = ["Feature1", "Feature2", "Feature3", "Feature4"], 
                                                        categorical_features = ["Feature5"], store_json_dir = f"{self.path_to_this_mod}")
         label_hash      = count.Categories.count(data = data["Feature5"].to_numpy())
-        cat_dist        = distribution.CategoricalDistributionPlotter(name = "Feature5", data = data["Feature5"], dqt = cat_qt, label_hash = label_hash)
+        cat_dist        = distribution.CategoricalDistributionPlotter(name = "Feature5", data = data["Feature5"], dqt = cat_qt, label_hash = label_hash,
+                                                                      store_dir = f"{self.path_to_this_mod}/plots")
 
         """ EXECUTION """
-        cat_dist.plot(store_dir = f"{self.path_to_this_mod}/plots")
+        cat_dist.plot()
 
         """ VERIFICATION """
         file_exists = False

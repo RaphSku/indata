@@ -17,7 +17,7 @@ class IFBoxPlot:
     """
 
     @abstractmethod
-    def plot(self, store_dir: str): # pragma: no cover
+    def plot(self): # pragma: no cover
         pass
 
 
@@ -30,11 +30,11 @@ class BoxPlot(IFBoxPlot):
     
     Methods
     -------
-        plot(store_dir: str)
-            Plots the boxplot and stores it to a user-defined directory
+        plot()
+            Plots the boxplot and stores it to a user-defined directory `store_dir`
     """
 
-    def __init__(self, name: str, data: pd.DataFrame):
+    def __init__(self, name: str, data: pd.DataFrame, store_dir: str = "./"):
         """Initialises the BoxPlot
 
         Parameters
@@ -43,23 +43,20 @@ class BoxPlot(IFBoxPlot):
             Name of the feature
         data : pd.DataFrame
             Data of the feature
-        """
-        self.name = name
-        self.data = data
-
-
-    def plot(self, store_dir: str) -> None:
-        """Plots the boxplot and stores it to a directory
-
-        Parameters
-        ----------
-        store_dir : str
+        store_dir : str, default = "./"
             A html file containing an interactive plot is stored to `store_dir`
         """
-        if not os.path.exists(store_dir):
-            os.mkdir(store_dir)
-        if not os.path.exists(os.path.join(store_dir, "boxplots")):
-            os.mkdir(f"{store_dir}/boxplots")
+        self.name      = name
+        self.data      = data
+        self.store_dir = store_dir
+
+
+    def plot(self) -> None:
+        """Plots the boxplot and stores it to a directory"""
+        if not os.path.exists(self.store_dir):
+            os.mkdir(self.store_dir)
+        if not os.path.exists(os.path.join(self.store_dir, "boxplots")):
+            os.mkdir(f"{self.store_dir}/boxplots")
 
         fig = go.Figure()
         fig.add_trace(go.Box(x = self.data,
@@ -71,4 +68,4 @@ class BoxPlot(IFBoxPlot):
             xaxis_title = f"{self.name}",
             xaxis       = {'tickfont': {'size': 15}, 'titlefont': {'size': 25}}
         )
-        fig.write_html(f"{store_dir}/boxplots/{self.name}.html")
+        fig.write_html(f"{self.store_dir}/boxplots/{self.name}.html")
