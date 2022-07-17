@@ -32,4 +32,4 @@ jobs:
         poetry install
     - name: Deploy via Poetry
       run: |
-        poetry --build --username __token__ --password ${{ secrets.PYPI_TOKEN }}
+        poetry publish --build --username __token__ --password ${{ secrets.PYPI_TOKEN }}
