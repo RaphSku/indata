@@ -1,14 +1,22 @@
-"""Testing the functionality of DataSet and DataLoader"""
+"""
+Testing the functionality of DataSet and DataLoader
+"""
 
 import os
 import pytest
 import pandas as pd
 import numpy as np
 
-
-import indata.dataio.load as load
-import indata.dataio.transformer as transform
 import indata.exception.base as exception
+from indata.dataio import (
+    DataLoader, 
+    DataSet, 
+    Transformer, 
+    impute_median, 
+    impute_mean, 
+    impute_mode, 
+    replace_entries
+)
 
 
 class TestDataSet:
@@ -28,7 +36,7 @@ class TestDataSet:
         path    = os.path.join(setup, "test.csv")
 
         """ EXECUTION """
-        dataset = load.DataSet(path_to_file = path)
+        dataset = DataSet(path_to_file = path)
 
         """ VERIFICATION """
         assert path == dataset.path_to_file
@@ -41,7 +49,7 @@ class TestDataSet:
 
         """ EXECUTION & VERIFICATION """
         with pytest.raises(exception.PathNotFoundError):
-            dataset = load.DataSet(path_to_file = "./fail.csv")
+            dataset = DataSet(path_to_file = "./fail.csv")
 
 
 
@@ -52,17 +60,17 @@ class TestDataLoader:
         which will be used by the DataLoader 
         """
         path        = os.path.join(os.path.abspath(os.path.dirname(__file__)), "test.csv")
-        cls.dataset = load.DataSet(path_to_file = path)
+        cls.dataset = DataSet(path_to_file = path)
 
         path_two        = os.path.join(os.path.abspath(os.path.dirname(__file__)), "test2.csv")
-        cls.dataset_two = load.DataSet(path_to_file = path_two)
+        cls.dataset_two = DataSet(path_to_file = path_two)
 
 
     def test_initialisation_s01(self):
         """ Test if the attributes of DataLoader are set correctly """
 
         """ EXECUTION """
-        data_loader = load.DataLoader(dataset = self.dataset)
+        data_loader = DataLoader(dataset = self.dataset)
         
         """ VERIFICATION """
         assert self.dataset == data_loader.dataset
@@ -72,7 +80,7 @@ class TestDataLoader:
         """ Test if csv file is read correctly by the DataLoader """
 
         """ PREPARATION """
-        data_loader = load.DataLoader(dataset = self.dataset)
+        data_loader = DataLoader(dataset = self.dataset)
 
         """ EXECUTION """
         data_frame  = data_loader.read_csv()
@@ -92,8 +100,8 @@ class TestDataLoader:
         def callable_two(x: pd.DataFrame):
             return x.apply(lambda y: x.min() if y < 4 else y)
 
-        data_loader = load.DataLoader(dataset = self.dataset)
-        transformer = transform.Transformer(columns = ["Item1", "Item3"], funcs = [callable_one, callable_two])
+        data_loader = DataLoader(dataset = self.dataset)
+        transformer = Transformer(columns = ["Item1", "Item3"], funcs = [callable_one, callable_two])
 
         """ EXECUTION """
         act_data_frame  = data_loader.read_csv(transformer = transformer)
@@ -108,11 +116,11 @@ class TestDataLoader:
         """ Test if available transformer callables are working appropriately """
 
         """ PREPARATION """
-        data_loader = load.DataLoader(dataset = self.dataset_two)
-        transformer = transform.Transformer(columns = ["Item1", "Item2", "Item3", "Item4"],
-                                            funcs   = [transform.impute_mean, transform.impute_median,
-                                                       transform.impute_mode, transform.replace_entries],
-                                            args    = [("Python", "Cpp")])
+        data_loader = DataLoader(dataset = self.dataset_two)
+        transformer = Transformer(columns = ["Item1", "Item2", "Item3", "Item4"],
+                                  funcs   = [impute_mean, impute_median,
+                                             impute_mode, replace_entries],
+                                  args    = [("Python", "Cpp")])
 
         """ EXECUTION """
         act_data_frame = data_loader.read_csv(transformer = transformer)

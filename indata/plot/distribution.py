@@ -1,8 +1,12 @@
-"""All plotter which visualise distributions of features"""
+"""
+All plotter which visualise distributions of features
+"""
 
 import os
+import attrs
 import pandas as pd
 import plotly.graph_objects as go
+
 from abc import abstractmethod
 
 
@@ -11,10 +15,17 @@ from abc import abstractmethod
 #################################################################################################
 
 class IFDistributionPlotter:
-    """ Interface for the DistributionPlotters """
+    """
+    Interface for the DistributionPlotters 
+
+    Methods
+    -------
+    plot()
+        Responsible for the plotting of the distribution plot
+    """
 
     @abstractmethod
-    def plot(self): # pragma: no cover
+    def plot(self) -> None: # pragma: no cover
         pass
 
 
@@ -22,30 +33,35 @@ class IFDistributionPlotter:
 #                                 ContinuousDistributionPlotter                                 #
 #################################################################################################
 
+@attrs.define()
 class ContinuousDistributionPlotter(IFDistributionPlotter):
-    """Plots distribution of a continuous feature in form of a histogram
+    """
+    Plots distribution of a continuous feature in form of a histogram
     and add marks for important values like mean and median
 
     Methods
     -------
-        plot()
-            Plotting a histogram of a continuous feature and stores it to `store_dir`
+    plot()
+        Plotting a histogram of a continuous feature and stores it to `store_dir`
     """
+    name: str          = attrs.field(factory = str)
+    data: pd.DataFrame = attrs.field(factory = pd.DataFrame)
+    dqt: pd.DataFrame  = attrs.field(factory = pd.DataFrame)
+    store_dir: str     = attrs.field(factory = str)
 
     def __init__(self, name: str, data: pd.DataFrame, dqt: pd.DataFrame, store_dir: str = "./"):
-        """Initialises the ContinuousDistributionPlotter
-
+        """
         Parameters
         ----------
-            name : str
-                Name of the feature which will be plotted
-            data : pd.DataFrame
-                Column of a dataframe which represents the data of the feature
-            dqt : pd.DataFrame
-                The data quality table from which information like mean and median
-                are extracted
-            store_dir : str, default = "./"
-                A html file containing an interactive plot is stored to `store_dir`
+        name : str
+            Name of the feature which will be plotted
+        data : pd.DataFrame
+            Column of a dataframe which represents the data of the feature
+        dqt : pd.DataFrame
+            The data quality table from which information like mean and median
+            are extracted
+        store_dir : str, default = "./"
+            A html file containing an interactive plot is stored to `store_dir`
         """
         self.name      = name
         self.data      = data
@@ -54,7 +70,9 @@ class ContinuousDistributionPlotter(IFDistributionPlotter):
 
 
     def plot(self) -> None:
-        """Plotting a histogram of a continuous feature"""
+        """ 
+        Plotting a histogram of a continuous feature 
+        """
         if not os.path.exists(self.store_dir):
             os.mkdir(self.store_dir)
         if not os.path.exists(os.path.join(self.store_dir, "continuous")):
@@ -84,17 +102,23 @@ class ContinuousDistributionPlotter(IFDistributionPlotter):
 #                                 CategoricalDistributionPlotter                                #
 #################################################################################################
 
+@attrs.define()
 class CategoricalDistributionPlotter(IFDistributionPlotter):
-    """Plots the distribution of a categorical feature in form of a bar plot
+    """
+    Plots the distribution of a categorical feature in form of a bar plot
 
     Methods
     -------
-        plot()
-            Stores the plot to the `store_dir` directory
+    plot()
+        Stores the plot to the `store_dir` directory
     """
-    def __init__(self, name: str, data: pd.DataFrame, label_hash: dict, dqt: pd.DataFrame = None, store_dir: str = "./"):
-        """Initialises the CategoricalDistributionPlotter
+    name: str          = attrs.field(factory = str)
+    data: pd.DataFrame = attrs.field(factory = pd.DataFrame)
+    dqt: pd.DataFrame  = attrs.field(factory = pd.DataFrame)
+    store_dir: str     = attrs.field(factory = str)
 
+    def __init__(self, name: str, data: pd.DataFrame, label_hash: dict, dqt: pd.DataFrame = None, store_dir: str = "./"):
+        """
         Parameters
         ----------
         name : str
@@ -116,7 +140,8 @@ class CategoricalDistributionPlotter(IFDistributionPlotter):
 
 
     def plot(self) -> None:
-        """Plots the categorical feature as a bar plot, the distinct categories
+        """
+        Plots the categorical feature as a bar plot, the distinct categories
         are plotted on the x-axis and their respective frequencies on the y-axis
         """
         if not os.path.exists(self.store_dir):

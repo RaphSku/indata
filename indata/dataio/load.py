@@ -1,58 +1,60 @@
-"""The module load contains the classes of DataSet and
-DataLoader which are responsible for the correct loading
-of the target file
+"""
+DataSet and DataLoader are used to define the data source
+and to load the data such that it can be ingested by upstream
+classes.
 """
 
 import os
+import attrs
 import pandas as pd
-from abc import abstractmethod
 
+from abc     import abstractmethod
+from pathlib import Path
 
-import indata.exception.base as exception
 import indata.dataio.transformer as transform
-
-
-#################################################################################################
-#                                   Interface DataSet                                           #
-#################################################################################################
-
-class IFDataSet:
-    """ Interface of DataSet """
-    pass
+import indata.exception.base     as exception
 
 
 #################################################################################################
 #                                         DataSet                                               #
 #################################################################################################
 
-class DataSet(IFDataSet):
-    """DataSet stores the metadata about the target file
-    
-    Parameters
-    ----------
+attrs.define()
+class DataSet:
+    """
+    DataSet stores the metadata about the target file
+    """
+    path_to_file: Path = attrs.field(factory = Path)
+
+    def __init__(self, path_to_file: Path):
+        """
+        Parameters
+        ---------   
         path_to_file: str
             The `path` to the target file
 
-    Raises
-    ------
+        Raises
+        ------
         PathNotFoundError
             Raised when the path of the the target file does not exists!
-    """
-
-    def __init__(self, path_to_file: str):
+        """
         if not os.path.exists(path_to_file):
             raise exception.PathNotFoundError("Given path to file does not exists! Please check it again.")
         self.path_to_file = path_to_file
 
 
 #################################################################################################
-#                                   Interface DataLoader                                        #
+#                                      Interface DataLoader                                     #
 #################################################################################################
 
 class IFDataLoader:
-    """Interface for DataLoader
-    This interface requires the implementing classes to implement a 
-    read_csv method
+    """
+    Interface for DataLoader
+    
+    Methods
+    -------
+    read_csv()
+        Reads the csv file
     """
 
     @abstractmethod
@@ -64,30 +66,31 @@ class IFDataLoader:
 #                                         DataLoader                                            #
 #################################################################################################
 
+@attrs.define()
 class DataLoader(IFDataLoader):
-    """DataLoader is responsible for loading the data inside of the target file
+    """
+    DataLoader is responsible for loading the data inside of the target file
 
     Methods
     -------
-        read_csv(sep: str = ",", lineterminator: str = None)
-            Extracts the data out of a csv file and returns a pandas dataframe
+    read_csv()
+        Reads the csv file
     """
+    dataset: DataSet = attrs.field(factory = DataSet)
 
     def __init__(self, dataset: DataSet):
-        """The DataSet holds the information about the target file and its needed
-        in order to extract the data out of it
-
+        """
         Parameters
         ----------
-        dataset : DataSet
-            `dataset` contains all the necessary information in order to read
-            the target file
+        dataset: DataSet
+            Defines the data source from which the file gets loaded
         """
         self.dataset = dataset
 
 
     def read_csv(self, sep: str = ",", lineterminator: str = None, transformer: transform.Transformer = None) -> pd.DataFrame:
-        """Extracts data out of a csv file and returns a pandas dataframe
+        """
+        Extracts data out of a csv file and returns a pandas dataframe
 
         Parameters
         ----------

@@ -1,7 +1,10 @@
-"""Functions specialised on checking specific conditions"""
+"""
+Functions specialised on checking specific conditions
+"""
 
 def isNumeric(x: str) -> bool:
-    """Checks whether a string is numeric
+    """
+    Checks whether a string is numeric
 
     Parameters
     ----------

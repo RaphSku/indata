@@ -1,12 +1,15 @@
-"""Transforms columns of a dataframe with user written callables, such that the user can
-manipulate the dataframe straight away"""
+"""
+Transform columns of a dataframe with user written callables, such that the user can
+manipulate the dataframe straight away
+"""
 
+import attrs
 import copy
 import pandas as pd
-from abc import abstractmethod
-from typing import Any, Callable
-from inspect import signature
 
+from abc     import abstractmethod
+from typing  import Any, Callable
+from inspect import signature
 
 import indata.exception.base as exception
 
@@ -16,9 +19,15 @@ import indata.exception.base as exception
 #################################################################################################
 
 class IFTransformer:
-    """Interface for the Transformer
+    """
+    Interface for the Transformer
     The transform method is used on a set of dataframe columns in order to apply
     modifications
+
+    Methods
+    -------
+    transform()
+        Transforms a dataframe according to a transformation function 
     """
 
     @abstractmethod
@@ -30,20 +39,23 @@ class IFTransformer:
 #                                         Transformer                                           #
 #################################################################################################
 
+@attrs.define()
 class Transformer(IFTransformer):
-    """Transformer which does in-place modification of dataframes according
+    """
+    Transformer which does in-place modification of dataframes according
     to specified transformer properties
 
     Methods
     -------
-        transform(dataframe: pd.DataFrame)
-            Applied on a column of a parent dataframe which should be modified
-            with a callable
+    transform()
+        Transforms a dataframe according to a transformation function 
     """
+    columns: list[str]    = attrs.field(factory = list[str])
+    funcs: list[Callable] = attrs.field(factory = list[Callable])
+    args: list[tuple]     = attrs.field(factory = list[tuple])
 
     def __init__(self, columns: list[str], funcs: list[Callable], args: list[tuple] = None):
-        """Initalises the Transformer
-
+        """
         Parameters
         ----------
         columns : list[str]
@@ -67,7 +79,8 @@ class Transformer(IFTransformer):
         
 
     def transform(self, dataframe: pd.DataFrame) -> pd.DataFrame:
-        """Transforms columns in a dataframe according to user specified callables
+        """
+        Transforms columns in a dataframe according to user specified callables
 
         Returns
         -------

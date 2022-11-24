@@ -1,9 +1,13 @@
-"""Scatter Plot Matrix with Correlation Coefficients"""
+"""
+Scatter Plot Matrix with Correlation Coefficients
+"""
 
 import os
+import attrs
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
+
 from abc import abstractmethod
 from plotly.subplots import make_subplots
 
@@ -13,13 +17,19 @@ from plotly.subplots import make_subplots
 #################################################################################################
 
 class IFSPLOM:
-    """Interface for the SPLOM classes, SPLOM
+    """
+    Interface for the SPLOM classes, SPLOM
     classes are used in order to have a simple visualisation
     of the features and their correlation between each other
+
+    Methods
+    -------
+    plot()
+        Responsible for the plotting of the SPLOM
     """
 
     @abstractmethod
-    def plot(self): # pragma: no cover
+    def plot(self) -> None: # pragma: no cover
         pass
 
 
@@ -27,21 +37,25 @@ class IFSPLOM:
 #                                         SPLOM                                                 #
 #################################################################################################
 
+@attrs.define()
 class SPLOM:
-    """Visualisation of the correlation of the features 
+    """
+    Visualisation of the correlation of the features 
     in form of a Scatter Plot Matrix. A Scatter Plot Matrix
     is quadratic and its dimension is equal to the number of
     features
     
     Methods
     -------
-        plot()
-            Plots the SPLOM and stores it to a user-defined directory `store_dir`
+    plot()
+        Plots the SPLOM and stores it to a user-defined directory `store_dir`
     """
+    name: str                     = attrs.field(factory = str)
+    continuous_data: pd.DataFrame = attrs.field(factory = pd.DataFrame)
+    store_dir: str                = attrs.field(factory = str)
 
     def __init__(self, name: str, continuous_data: pd.DataFrame, store_dir: str = "./"):
-        """Initialises the SPLOM
-
+        """
         Parameters
         ----------
         name : str
@@ -57,7 +71,9 @@ class SPLOM:
         
     
     def plot(self) -> None:
-        """Plots the SPLOM and stores the plot inside of `store_dir`"""
+        """ 
+        Plots the SPLOM and stores the plot inside of `store_dir` 
+        """
         if not os.path.exists(self.store_dir):
             os.mkdir(self.store_dir)
         if not os.path.exists(os.path.join(self.store_dir, "splom")):
