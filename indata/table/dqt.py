@@ -1,16 +1,20 @@
-"""A dqt is a data quality table which splits an ABT (Analytics Base Table)
+"""
+A dqt is a data quality table which splits an ABT (Analytics Base Table)
 into categorical and continuous features which are getting reported on whether
 there are missing values, what the minimum and maximum is, what is the mode in
 categorical features, etc. It provides insight into the data without the need
-to visualize it in the first place"""
+to visualize it in the first place
+"""
 
 import os
+import attrs
 import pandas as pd
 import numpy as np
-from abc import abstractmethod
 
+from abc    import abstractmethod
+from typing import Any
 
-import indata.dataio.load as load
+import indata.dataio as dataio
 import indata.utils.checks as checks
 import indata.exception.base as exception
 
@@ -20,13 +24,19 @@ import indata.exception.base as exception
 #################################################################################################
 
 class IFDataQualityTable:
-    """Interface for DataQualityTable
+    """
+    Interface for DataQualityTable
     The implementing class needs to implement the method
     create_table since this method is used to generate a DQT
+
+    Methods
+    -------
+    create_table() Any
+        Creates the data quality report
     """
 
     @abstractmethod
-    def create_table(self): # pragma: no cover
+    def create_table(self) -> Any: # pragma: no cover
         pass
 
 
@@ -34,23 +44,26 @@ class IFDataQualityTable:
 #                                    DataQualityTable                                           #
 #################################################################################################
 
+@attrs.define()
 class DataQualityTable(IFDataQualityTable):
-    """This class will generate a DQT based on the given
+    """
+    This class will generate a DQT based on the given
     data which is loaded by the DataLoader
     
     Methods
     -------
-        print_header_info()
-            Prints the features of the data
-        create_table(continuous_features: list[str], categorical_features: list[str], store_json_dir: str)
-            Creates the DQT, the split into continuous and categorical features bases on the selection of the user,
-            e.g. `continuous_features' is a list of feature names which match the name of the column in the data.
-            `store_json_dir` is a path to a directory where the table will be stored in json format. 
+    print_header_info()
+        Prints the features of the data
+    create_table(continuous_features: list[str], categorical_features: list[str], store_json_dir: str)
+        Creates the DQT, the split into continuous and categorical features bases on the selection of the user,
+        e.g. `continuous_features' is a list of feature names which match the name of the column in the data.
+        `store_json_dir` is a path to a directory where the table will be stored in json format. 
     """
+    dataloader: dataio.DataLoader = attrs.field(factory = dataio.DataLoader)
+    check_consistentcy: bool      = attrs.field(factory = bool)
 
-    def __init__(self, dataloader: load.DataLoader, check_consistency: bool = False):
-        """Initializes the DQT instance
-
+    def __init__(self, dataloader: dataio.DataLoader, check_consistency: bool = False):
+        """
         Parameters
         ----------
         dataloader : load.DataLoader
@@ -63,14 +76,17 @@ class DataQualityTable(IFDataQualityTable):
 
 
     def print_header_infos(self) -> None:
-        """ Prints the column names of the dataframe and the types of the columns """
+        """ 
+        Prints the column names of the dataframe and the types of the columns 
+        """
         columns    = self.dataframe.columns
         for index in range(len(self.dataframe.loc[0])):
             print(f"{columns[index]}:", type(self.dataframe.loc[0][index]))
 
 
     def create_table(self, continuous_features: list[str], categorical_features: list[str], store_json_dir: str) -> tuple[pd.DataFrame, pd.DataFrame]:
-        """Creates the DQT and stores it as a json file, two json files
+        """
+        Creates the DQT and stores it as a json file, two json files
         be generated, one for the continous features and one for the categorical
         features
 
@@ -118,7 +134,8 @@ class DataQualityTable(IFDataQualityTable):
 
 
     def __create_continuous_dqt(self, data_frame_cont: pd.DataFrame, continuous_features: list[str]) -> pd.DataFrame:
-        """Creates the DQT for the continuous features
+        """
+        Creates the DQT for the continuous features
 
         Parameters
         ----------
@@ -154,7 +171,8 @@ class DataQualityTable(IFDataQualityTable):
 
 
     def __create_categorical_dqt(self, data_frame_catg: pd.DataFrame, categorical_features: list[str]) -> pd.DataFrame:
-        """Creates the DQT for categorical features
+        """
+        Creates the DQT for categorical features
 
         Parameters
         ----------
@@ -198,7 +216,8 @@ class DataQualityTable(IFDataQualityTable):
 
 
     def __check_schema(self, dataframe: pd.DataFrame, check_consistency: bool) -> pd.DataFrame:
-        """Checks whether the data is consistent or not with its schema, the schema
+        """
+        Checks whether the data is consistent or not with its schema, the schema
         is inferred based on the datatype of the zero-indexed element
 
         Parameters

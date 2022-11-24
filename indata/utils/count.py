@@ -1,10 +1,11 @@
-"""All counting tools which are utility tools are defined
+"""
+All counting tools which are utility tools are defined
 in this module
 """
 
 import numpy as np
-from typing import Tuple
 
+from typing import Tuple
 
 import indata.exception.base as exception
 
@@ -14,14 +15,15 @@ import indata.exception.base as exception
 #################################################################################################
 
 class Categories:
-    """All counting operations performed on categorical features
+    """
+    All counting operations performed on categorical features
     are subsummed in this class
     
     Methods
     -------
-        count(data: list)
-            `data` should be 1d-array-like and should contain categorical features,
-            `count` will count how many features per feature are in `data`
+    count(data: list)
+        `data` should be 1d-array-like and should contain categorical features,
+        `count` will count how many features per feature are in `data`
     """
     def __init__(self): # pragma: no cover
         pass
@@ -29,7 +31,8 @@ class Categories:
 
     @staticmethod
     def count(data: list) -> dict[Tuple[int, str], int]:
-        """Counts the number of categorical features which are present
+        """
+        Counts the number of categorical features which are present
         in `data`
 
         Parameters
