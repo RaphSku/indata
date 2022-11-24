@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "indata"
-version = "1.1.0"
+version = "1.1.1"
 description = "A tool in order to easily generate data quality reports from ABTs, visualize data and manipulate the ABT (analytics base table)"
 authors = ["RapSku <rapsku.dev@gmail.com>"]
 repository = "https://github.com/RaphSku/indata"
@@ -15,6 +15,7 @@ pandas = "^1.4.2"
 numpy = "^1.22.3"
 plotly = "^5.7.0"
 tabulate = "^0.8.9"
+attrs = "^22.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.1"
