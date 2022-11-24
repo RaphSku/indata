@@ -1,58 +1,95 @@
-[![Author][contributors-shield]][contributors-url]
 [![Apache 2.0 License][license-shield]][license-url]
-![Version][version-shield]
 ![example workflow](https://github.com/RaphSku/indata/actions/workflows/ci.yml/badge.svg)
+[![InData CD](https://github.com/RaphSku/indata/actions/workflows/cd.yml/badge.svg)](https://github.com/RaphSku/indata/actions/workflows/cd.yml)
 
 # indata
-InData is a concise project which enables the user to generate data quality reports with ease and also other data exploration and data visualization tools are available
-
-### Goal
-InData should primarily enable the fast generation of data quality reports for continous and categorical features. Additionally, data visualisation tools are integrated which can help to find patterns faster in data.
+InData is a concise project which enables the user to generate data quality reports with ease. Data exploration and data visualisation tools are also provided for convenience.
 
 ### How to install it
-1. `pip install indata`
+```bash 
+pip install indata
+```
+
+### How it is organised
+```bash
+.
+└── indata/
+    ├── dataio
+    ├── table
+    ├── plot
+    └── utils
+```
 
 ### How to use it
-If you want to have more insight into how this library works, then I would advise you to look at the numerous unit tests and see how it is used there.
-For quick starters, you will have to undertake the following steps in order to use this library:
 
-1. You have to specify where your data is via
-
+#### dataio
+Provides you with everything you need in order to define the data source
 ```python
-dataset    = load.DataSet("./data.csv")
+dataset = indata.dataio.DataSet("./data.csv")
+```
+and get it loaded
+```python
+dataloader = indata.dataio.DataLoader(dataset)
 ```
 
-2. Then you have to load the data into the Dataloader
-
+#### table
+After you have defined your data source and constructed out of it a loader, you can start creating a data quality report
 ```python
-dataloader = load.DataLoader(dataset)
+analytics_table = indata.table.DataQualityTable(dataloader)
 ```
-
-3. Now you can create an instance of a DataQualityTable
-
+Now, if you want, you can have a look at the columns and what data type they have
 ```python
-analytics_table = dqt.DataQualityTable(dataloader)
-```
-
-4. (optional) You can have a look at the columns and their specifications
-
-```python 
 analytics_table.print_header_infos()
 ```
-
-5. Define which columns in your data refer to continuous and which to categorical features
-
-```python 
+Define which columns you want to investigate and which columns are continous and which are categorical. With these information, you can kick-off the creation of the data quality report
+```python
 continuous_features  = ["Popularity", "Vote_Count", "Vote_Average"]
 categorical_features = ["Release_Date", "Title", "Overview", "Original_Language", "Genre", "Poster_Url"]
-```
 
-6. Now you are ready to create the data quality report/table for the continuous and categorical features. If you only want the respective table for either categorical features or continuous features, then just pass an empty list to this method:
-
-```python
 dqt_cont, dqt_catg = analytics_table.create_table(continuous_features = continuous_features,
                                                   categorical_features = categorical_features,
                                                   store_json_dir = "./dqt")
+```
+In the folder `./dqt` you will find two json files, one for the categorical features and one for the continous features. Each file represents a data quality report for the respective group of features.
+
+### Advanced Usage
+#### Transformer
+If you have looked into what the different packages have to offer, you will notice that the `DataLoader` accepts another optional parameter called `transformer` which is an instance of the `indata.dataio.Transformer` class. A transformer acts on the dataframe and transforms the columns according to a defined transformer function. For instance, you can define the following Transformer
+```python
+transformer = indata.dataio.Transformer(columns = ["column1"], funcs = indata.dataio.impute_median)
+dataloader  = indata.dataio.DataLoader(dataset)
+dataloader.read_csv(transformer = transformer)
+```
+which will impute the missing values with the median.
+
+#### Plotting
+Currently, there are 3 supported plots: **boxplots**, **distribution plots** and **SPLOMS**. Let's see how fast we can create plots out of our data. All you need to get started is a dataframe with some data in it.
+
+##### Boxplots
+```python
+boxplot = indata.plot.BoxPlot(name = "Some nice Boxplot", data = df["column1"], store_dir = "./")
+boxplot.plot()
+```
+This will create a boxplot for `column1` and will create a directory `plots/boxplots/` at `store_dir` which will hold the `.html` files. These you can open and interactively explore the boxplot.
+
+##### Distribution Plots
+Distribution plots come in two flavours, a distribution plotter for categorical features and one for continous features. The distribution plotter expect two additional parameters, one is the data quality report and a `label_hash`. The data quality report is needed because statistics are extracted from it and plotted inside of the visualisation to enrich it with further details. And `label_hash` is only used for the categorical distribution plotter, you do not need to bother what it does, just use the utility function as you can see below
+```python
+cdist      = indata.plot.ContinuousDistributionPlotter(name = "Some Feature", data = data["feature1"], dqt = cqt,
+                                                       store_dir = "./")
+cdist.plot()
+
+label_hash = indata.utils.count.Categories.count(data = df["feature2"]
+cat_dist   = indata.plot.CategoricalDistributionPlotter(name = "Some other Feature", data = df["feature2"], dqt = cat_qt, label_hash = label_hash,
+                                                        store_dir = "./")
+cat_dist.plot()
+```
+
+##### SPLOM
+SPLOM stands for scatterplot matrix and is essentially a matrix of plots where each feature gets plotted against each other. This is useful if you want to investigate linear relationships between the features with just one glance. You can create a SPLOM as simple as running
+```python
+splom = indata.plot.SPLOM(name = "SPLOM", continuous_data = data[["feature1", "feature2", "feature3"]], 
+                          store_dir = "./")
 ```
 
 ### Results
@@ -192,11 +229,9 @@ And a data quality report for the categorical features:
 }
 ```
 
-Furthermore, when using the visualisation tools from this package, then these plots will be stored as `html` files in the directory you specified, it is stored as html files such that you can inspect the plot in more detail, thus it is an interactive plot.
+
   
 [contributors-url]: https://github.com/RaphSku
 [license-url]: https://github.com/RaphSku/indata/blob/main/LICENSE
 
-[contributors-shield]: https://img.shields.io/badge/Author-RaphSku-orange?style=plastic&labelColor=black
-[license-shield]: https://img.shields.io/badge/License-Apache%202.0-informational?style=plastic&labelColor=black
-[version-shield]: https://img.shields.io/badge/Version-1.0.0-red?style=plastic&labelColor=black
+[license-shield]: https://img.shields.io/badge/License-Apache%202.0-orange
