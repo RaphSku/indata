@@ -1,3 +1,5 @@
+# ARCHIVED
+
 [![Apache 2.0 License][license-shield]][license-url]
 ![example workflow](https://github.com/RaphSku/indata/actions/workflows/ci.yml/badge.svg)
 [![InData CD](https://github.com/RaphSku/indata/actions/workflows/cd.yml/badge.svg)](https://github.com/RaphSku/indata/actions/workflows/cd.yml)
